@@ -1,0 +1,54 @@
+<view class="container theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme=='dark'?'dark':'light'}}">
+    <view class="top-navbar" style="padding-top:{{statusBar-6}}px;height: {{customBar}}px;">
+        <view bindtap="tapBack" class="backnav" style="height: {{customBar-12}}px;width: {{customBar-12}}px;">
+            <image class="back-icon" src="{{darkTheme=='dark'?'../../assets/images/back-icon-dark.png':'../../assets/images/back-icon.png'}}" style="height: {{customBar-12}}px;width: {{customBar-12}}px;"></image>
+        </view>
+    </view>
+    <view class="about">
+        <image class="logo-img" src="../../assets/images/logo.png"></image>
+        <view class="version">万能节拍器 V{{version}}</view>
+        <view class="intro">这是一款专为音乐爱好者和专业人士设计的节拍器应用，可以帮助您练习乐器和掌握节奏。我们提供节拍、调速、音色、定时、数据统计等基础功能，以及切分节拍、熄屏播放、播放列表、热身训练、节拍技术、专属音色、主题配色等会员功能，还有更多功能也在陆续开发中。如果您喜欢这个应用，请予五星好评、购买PRO会员，这对我们是一个非常大的鼓励和支持。</view>
+        <view class="intro app-scope">
+            <view class="title">节拍律动，不止音乐</view>
+            <view class="item">
+                <image class="icon" src="../../assets/images/dance-icon.png"></image>
+                <view class="desc">
+                    <text class="sub-title">舞蹈</text>
+                    <text class="summary">帮助舞者保持统一的节奏和时间。</text>
+                </view>
+            </view>
+            <view class="item">
+                <image class="icon" src="../../assets/images/relax-icon.png"></image>
+                <view class="desc">
+                    <text class="sub-title">放松、冥想</text>
+                    <text class="summary">有助于更好地集中注意力，使人身心放松，缓解压力和焦虑。</text>
+                </view>
+            </view>
+            <view class="item">
+                <image class="icon" src="../../assets/images/run-icon.png"></image>
+                <view class="desc">
+                    <text class="sub-title">跑步</text>
+                    <text class="summary">设置合适的节拍，帮助跑步者更好地控制呼吸和步伐，提高跑步和锻炼的效果。</text>
+                </view>
+            </view>
+            <view class="item">
+                <image class="icon" src="../../assets/images/read-icon.png"></image>
+                <view class="desc">
+                    <text class="sub-title">阅读</text>
+                    <text class="summary">快速阅读的练习，如果你开始逐渐增加节拍器的速度，你会读得更快。</text>
+                </view>
+            </view>
+            <view class="item">
+                <image class="icon" src="../../assets/images/discover-icon.png"></image>
+                <view class="desc">
+                    <text class="sub-title">探寻</text>
+                    <text class="summary">发现更多美好的用途</text>
+                </view>
+            </view>
+        </view>
+        <view class="copyright">
+            <view>@2023 格言科技</view>
+            <view>geyantech.com</view>
+        </view>
+    </view>
+</view>

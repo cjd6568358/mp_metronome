@@ -1,0 +1,39 @@
+<view class="container theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme=='dark'?'dark':'light'}}">
+    <view class="top-navbar" style="padding-top:{{statusBar-6}}px;height: {{customBar}}px;">
+        <view bindtap="tapBack" class="backnav" style="height: {{customBar-12}}px;width: {{customBar-12}}px;">
+            <image class="back-icon" src="{{darkTheme=='dark'?'../../assets/images/back-icon-dark.png':'../../assets/images/back-icon.png'}}" style="height: {{customBar-12}}px;width: {{customBar-12}}px;"></image>
+        </view>
+    </view>
+    <view class="setting-list">
+        <view class="setting-items weui-cells" data-weui-theme="{{darkTheme}}">
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd">深色模式</view>
+                <view class="weui-cell__ft">
+                    <switch bindchange="switchDarkMode" checked="{{darkMode==='2'||darkTheme==='dark'}}"></switch>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd">
+                    <view class="weui-cell__bd vip-title">跟随系统</view>
+                    <text class="tip">开启后将自动同步系统深色模式设置。</text>
+                </view>
+                <view catch:tap="checkVip" class="weui-cell__ft">
+                    <switch bindchange="switchSystemConf" checked="{{systemConfOn}}" disabled="{{!userInfo.isVip}}"></switch>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="setting-list">
+        <view class="setting-items weui-cells" data-weui-theme="{{darkTheme}}">
+            <view class="weui-cell">
+                <view class="weui-cell__bd vip-title">主题皮肤</view>
+            </view>
+            <scroll-view class="colors" scrollX="true">
+                <view bindtap="tapColor" class="item {{theme==item.name?'active':''}} {{!userInfo.isVip&&idx>0?'lock':''}}" data-color="{{item.name}}" wx:for="{{colors}}" wx:for-index="idx" wx:key="k">
+                    <view class="block" style="background: {{item.color}} linear-gradient(166deg,{{item.color}} 0%,#F3F2F5 100%);"></view>
+                    <view class="title">{{item.title}}</view>
+                </view>
+            </scroll-view>
+        </view>
+    </view>
+</view>

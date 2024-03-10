@@ -1,0 +1,5 @@
+<cover-view class="custom-tab-bar {{darkTheme=='dark'?'tab-bar-dark':''}}" wx:if="{{showTabbar}}">
+  <cover-view bindtap="switchTab" class="custom-tab-bar-item" data-index="{{index}}" data-path="{{item.pagePath}}" wx:for="{{list}}" wx:key="index">
+    <cover-view class="cover-text {{selected==index?'active':''}}">{{item.text}}</cover-view>
+  </cover-view>
+</cover-view>

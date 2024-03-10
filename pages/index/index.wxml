@@ -1,0 +1,297 @@
+<view class="container theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme=='dark'?'dark':'light'}}">
+  <view class="top-navbar" style="padding-top:{{statusBar}}px;height: {{customBar}}px;">
+    <view bindtap="tapCalendar" class="calendar" style="height: {{customBar-2}}px;width: {{customBar-2}}px;">
+      <image class="calendar-icon" src="{{userInfo.todayClocked?'../../assets/images/calendar-checked-'+darkTheme+'.png':'../../assets/images/calendar-'+darkTheme+'.png'}}" style="height: {{customBar-2}}px;width: {{customBar-2}}px;"></image>
+    </view>
+    <view bindtap="handleShowVip" class="promo" style="height: {{customBar}}px;border-radius:{{customBar}}rpx" wx:if="{{promoDiscount>0&&promoDiscountShow}}">
+      <text class="vip-title" style="height: {{customBar}}px;"></text>
+      <text class="text" style="height: {{customBar}}px;">会员限时优惠，立减</text>
+      <text class="text" style="color: #FB602D;height: {{customBar}}px;">{{promoDiscount}}元</text>
+      <image class="arrow" src="../../assets/images/arrow-icon.png"></image>
+    </view>
+    <view bindtap="tapCalendar" class="roll" wx:else>
+      <view class="list">
+        <view class="txt" style="color: #FCE4A6;">小万祝您新春快乐，龙年大吉🧨🧧</view>
+        <view class="txt">21天挑战赢会员，新年达成好习惯</view>
+        <view class="txt" wx:if="{{onlineUsers>0}}">
+          <text class="num">{{onlineUsers}}</text>人正在练习
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="tool-bar" style="margin-top: {{navBarHeight+4}}px;">
+    <view bindtap="tapTempoBtn" class="tempo">
+      <image class="note" src="https://lukehui.oss-cn-beijing.aliyuncs.com/cheers/image/notes/note-{{tempo.duration}}-{{subNotes[subdivFirst].icon}}" wx:if="{{subdivFirst&&subNotes[subdivFirst].icon}}"></image>{{tempo.length}}/{{tempo.duration}}
+    </view>
+    <view bindtap="tapToneBtn" class="tone">{{activeTone}}</view>
+    <view bindtap="tapTapBpm" class="tap">TAP</view>
+    <view bindtap="tapTimerBtn" class="timer">
+      <text class="num" wx:if="{{timerRunning}}">{{timerMinStr}}<text>:</text>{{timerSecStr}}</text>
+      <image class="timer-icon" src="{{darkTheme=='dark'?'../../assets/images/timer-icon-dark.png':'../../assets/images/timer-icon-light.png'}}" wx:else></image>
+    </view>
+  </view>
+  <swiper bindchange="swiperChange" class="swiper" current="{{swiperStyle}}" duration="500" indicatorDots="{{true}}">
+    <swiper-item class="swiper-item swiper-wheel">
+      <view class="measure">
+        <view class="notation" wx:if="{{showNotation}}">
+          <swiper circular autoplay="{{notationSwiperAutoplay}}" class="notation-swiper" current="{{notationSwiperCurrent}}" displayMultipleItems="{{tempo.length>6?6:tempo.length}}" duration="{{notationSwiperInterval}}" easingFunction="linear" interval="{{notationSwiperInterval}}">
+            <swiper-item bindtap="tapTempoBtn" class="notation-item {{playing&&(curItemIndex>0&&curItemIndex-1==idx||curItemIndex==0&&idx==subdivs.length-1)?'active':''}}" data-idx="{{idx}}" wx:for="{{subdivs}}" wx:for-index="idx" wx:key="k">
+              <image class="icon" src="https://lukehui.oss-cn-beijing.aliyuncs.com/cheers/image/notes/note-{{tempo.duration}}-{{subNotes[item].icon}}" wx:if="{{item&&subNotes[item].icon}}"></image>
+              <view class="num">{{idx+1}}</view>
+            </swiper-item>
+          </swiper>
+        </view>
+        <view class="group" wx:else>
+          <view bindtap="tapLightItem" class="item" data-index="{{index}}" style="width: {{600/tempo.length}}rpx;" wx:for="{{items}}" wx:key="k">
+            <view class="item_child {{item.level>=3?'item_child_s':''}} {{item.state==1||!playing?'item_child_h':''}}" style="opacity:{{playing?1:0.3}}"></view>
+            <view class="item_child {{item.level>=2?'item_child_s':''}} {{item.state==1||!playing?'item_child_h':''}}" style="opacity:{{playing?1:0.3}}"></view>
+            <view class="item_child {{item.level>=1?'item_child_s':''}} {{item.state==1||!playing?'item_child_h':''}}" style="opacity:{{playing?1:0.3}}"></view>
+          </view>
+        </view>
+        <view class="count" wx:if="{{showTempoCount}}">小节 <text class="num">{{upbeatOn&&tempo.length>1&&barCount>0?barCount-1:barCount}}</text> 计拍 <text class="num">{{upbeatOn&&tempo.length>1?beatCount>=tempo.length?beatCount-tempo.length-1:0:beatCount}}</text>
+        </view>
+      </view>
+      <view class="main">
+        <view class="wheel-speed">
+          <view class="wheel-out">
+            <view bindtouchcancel="bindWheelTouchEnd" bindtouchend="bindWheelTouchEnd" bindtouchstart="bindWheelTouchStart" catchtouchmove="bindWheelTouchMove" class="{{playing?'wheel wheel-on':'wheel wheel-off'}}" id="wheel" style="transform: rotate({{wheelAngle}}deg);-webkit-transform: rotate({{wheelAngle}}deg)">
+              <view class="wheel-light"></view>
+            </view>
+            <view class="speed-zone">
+              <view class="bpm-txt">BPM</view>
+              <view class="speed-control">
+                <view bindtouchend="tapEndBpmSpeedBtn" catchlongpress="longPressMinusBpmSpeedBtn" catchtap="tapMinusBpmSpeedBtn" catchtouchmove="moveSpeedZone" class="minus" touchcancel="tapEndBpmSpeedBtn">
+                  <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                </view>
+                <view catchtap="tapSpeedNum" class="number">{{bpmSpeed}}</view>
+                <view bindtouchend="tapEndBpmSpeedBtn" catchlongpress="longPressPlusBpmSpeedBtn" catchtap="tapIncBpmSpeedBtn" catchtouchmove="moveSpeedZone" class="plus" touchcancel="tapEndBpmSpeedBtn">
+                  <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                </view>
+              </view>
+              <view bindtap="tapSpeedName" class="speed-name">
+                <text class="name">{{speedName}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="speed-minibar">
+          <view class="speed-zone">
+            <view class="bpm-txt">BPM</view>
+            <view class="speed-control">
+              <view bindtouchend="tapEndBpmSpeedBtn" catchlongpress="longPressMinusBpmSpeedBtn" catchtap="tapMinusBpmSpeedBtn" catchtouchmove="moveSpeedZone" class="minus" touchcancel="tapEndBpmSpeedBtn">
+                <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+              </view>
+              <view catchtap="tapSpeedNum" class="number">{{bpmSpeed}}</view>
+              <view bindtouchend="tapEndBpmSpeedBtn" catchlongpress="longPressPlusBpmSpeedBtn" catchtap="tapIncBpmSpeedBtn" catchtouchmove="moveSpeedZone" class="plus" touchcancel="tapEndBpmSpeedBtn">
+                <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+              </view>
+            </view>
+            <view bindtap="tapSpeedName" class="speed-name">
+              <text class="name">{{speedName}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="foot-op">
+          <view bindtap="tapTrain" class="train-entry">专业训练</view>
+          <view class="play-zone">
+            <view bindtap="tapPlayPause" class="{{!playing?'play-btn':'pause-btn'}}"></view>
+          </view>
+          <view bindtap="tapPlaylist" class="playlist">播放列表 <text class="num" wx:if="{{playlist.length>0}}">{{playlist.length}}</text>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+    <swiper-item class="swiper-item swiper-metro">
+      <view class="measure">
+        <view class="group">
+          <view class="item" data-index="{{index}}" style="width: {{660/tempo.length}}rpx;" wx:for="{{items}}" wx:key="k">
+            <view class="item_child {{playing?'item_child_s':''}} {{item.state&&playing?'item_child_h':''}}"></view>
+          </view>
+        </view>
+        <view class="count" wx:if="{{showTempoCount}}">小节 <text class="num">{{barCount}}</text> 计拍 <text class="num">{{beatCount}}</text>
+        </view>
+      </view>
+      <view class="metro">
+        <view class="speed-zone">
+          <view bindtap="tapSpeedName" class="speed-name">
+            <text class="name">{{speedName}}</text>
+          </view>
+          <view class="speed-control">
+            <view bindtouchend="tapEndBpmSpeedBtn" catchlongpress="longPressMinusBpmSpeedBtn" catchtap="tapMinusBpmSpeedBtn" catchtouchmove="moveSpeedZone" class="minus" touchcancel="tapEndBpmSpeedBtn">
+              <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+            </view>
+            <view catchtap="tapSpeedNum" class="number">{{bpmSpeed}}</view>
+            <view bindtouchend="tapEndBpmSpeedBtn" catchlongpress="longPressPlusBpmSpeedBtn" catchtap="tapIncBpmSpeedBtn" catchtouchmove="moveSpeedZone" class="plus" touchcancel="tapEndBpmSpeedBtn">
+              <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+            </view>
+          </view>
+        </view>
+        <view class="rule"></view>
+        <view bindtouchcancel="bindSliderTouchEnd" bindtouchend="bindSliderTouchEnd" bindtouchstart="bindSliderTouchStart" catchtouchmove="bindSliderTouchMove" class="pointer {{playing?'run':'ease'}}" style="transform: rotate({{metroAngle}}deg);-webkit-transform: rotate({{metroAngle}}deg);animation-duration: {{playing?itemDuration:2000}}ms;">
+          <view class="slider" style="top:{{sliderTop}}rpx"></view>
+        </view>
+        <view class="mask"></view>
+        <view class="foot-op">
+          <view bindtap="tapTrain" class="train-entry">专业训练</view>
+          <view class="play-zone">
+            <view bindtap="tapPlayPause" class="{{!playing?'play-btn':'pause-btn'}}"></view>
+          </view>
+          <view bindtap="tapPlaylist" class="playlist">播放列表 <text class="num" wx:if="{{playlist.length>0}}">{{playlist.length}}</text>
+          </view>
+        </view>
+      </view>
+    </swiper-item>
+  </swiper>
+  <mp-half-screen-dialog bindclose="hideTempo" catchtouchmove="preventTouchMove" class="tempo-dialog" data-weui-theme="{{darkTheme}}" show="{{showTempoDialog}}" title="拍号">
+    <view class="tempo-setting" slot="desc">
+      <view class="tempo-group">
+        <view class="tempo-control">
+          <view class="title">增减节拍</view>
+          <view class="btns">
+            <view catchtap="tapMinusTempoLengthBtn" class="minus">
+              <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+            </view>
+            <view catchtap="tapIncTempoLengthBtn" class="plus">
+              <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+            </view>
+          </view>
+        </view>
+        <view class="display">
+          <view class="title">当前拍号</view>
+          <view class="screen">{{tempo.length}}/{{tempo.duration}}</view>
+        </view>
+        <view class="tempo-control right-pannel">
+          <view class="title">增减音符</view>
+          <view class="btns">
+            <view catchtap="tapMinusTempoDurBtn" class="minus">
+              <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+            </view>
+            <view catchtap="tapIncTempoDurBtn" class="plus">
+              <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="tempo-quick">
+        <view class="dialog-title">
+          <view class="vip-title">切分节拍</view>
+          <view class="option"> 播放时显示 <switch bindchange="switchNotation" checked="{{showNotation}}" class="switch"></switch>
+          </view>
+        </view>
+        <scroll-view class="tab-scroll" scrollX="{{true}}">
+          <view class="subtabs" style="width: {{tempo.length*102}}rpx;">
+            <view catchtap="tapSubdivTab" class="tab {{!playing&&idx==curSubIndex||playing&&idx==curItemIndex?'active':''}}" data-tab="{{idx}}" wx:for="{{subdivs}}" wx:for-index="idx" wx:key="k">
+              <image class="icon" src="https://lukehui.oss-cn-beijing.aliyuncs.com/cheers/image/notes/note-{{tempo.duration}}-{{subNotes[item].icon}}" wx:if="{{item&&subNotes[item].icon}}"></image>
+              <view class="num">{{idx+1}}</view>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="notes">
+          <view catchtap="tapSubdivNoteItem" class="note-item {{userInfo.isVip&&( !playing&&idx==subdivs[curSubIndex]||playing&&idx==subdivs[curItemIndex] )?'active':''}} {{tabSubNotes.length==1?'only-child':''}}" data-note="{{item}}" data-subdiv="{{idx}}" wx:for="{{tabSubNotes}}" wx:for-index="idx" wx:key="k">
+            <image class="icon" src="https://lukehui.oss-cn-beijing.aliyuncs.com/cheers/image/notes/note-{{tempo.duration}}-{{item.icon}}" wx:if="{{item&&item.icon}}"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+  </mp-half-screen-dialog>
+  <mp-half-screen-dialog bindclose="hideTone" class="tone-dialog" data-weui-theme="{{darkTheme}}" show="{{showToneDialog}}" title="音色">
+    <view slot="desc">
+      <scroll-view class="dialog-scroll" scrollY="true">
+        <view class="tone-quick tone-vip">
+          <view catchtap="tapToneItem" class="{{item.id==tone?'tone-item active':'tone-item'}} {{item.vip==1?'vip-title':''}}" data-tone="{{item.id}}" data-vip="{{item.vip}}" wx:for="{{tones}}" wx:key="k">{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+  </mp-half-screen-dialog>
+  <mp-half-screen-dialog bindclose="hideTimer" class="timer-dialog" data-weui-theme="{{darkTheme}}" show="{{showTimerDialog}}" title="定时器">
+    <view slot="desc" wx:if="{{!timerRunning}}">
+      <view class="timer-setting">
+        <view class="dialog-title">设置时长（分钟）</view>
+        <view class="timer-control">
+          <view bindtouchmove="moveSpeedZone" catchtap="tapMinusTimerBtn" class="minus">
+            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+          </view>
+          <input bindblur="blurTimerNumber" class="number" type="number" value="{{timerMinutes}}"></input>
+          <view catchtap="tapIncTimerBtn" catchtouchmove="moveSpeedZone" class="plus">
+            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+          </view>
+        </view>
+      </view>
+      <view class="timer-setting">
+        <view class="dialog-title">常用时长（分钟）</view>
+      </view>
+      <view class="tone-quick time-list">
+        <view catchtap="tapTimerItem" class="{{item==timerMinutes?'tone-item active':'tone-item'}}" data-mins="{{item}}" wx:for="{{regularTimerMinutes}}" wx:for-index="idx" wx:key="k">{{item}}</view>
+      </view>
+      <button bindtap="tapTimerPriButton" class="timer-button" data-type="play" type="primary">开始计时</button>
+    </view>
+    <view slot="desc" wx:else>
+      <view class="timer-num">{{timerMinStr}}<text class="timer-colon">:</text>{{timerSecStr}}</view>
+      <view wx:if="{{!playing}}">
+        <button bindtap="tapTimerPriButton" class="timer-button" data-type="resumeplay" type="primary">继续计时</button>
+        <button bindtap="tapTimerPriButton" class="timer-button stop-button" data-type="stop" type="primary">停止计时</button>
+      </view>
+      <view wx:else>
+        <button bindtap="tapTimerPriButton" class="timer-button stop-button" data-type="stop" type="primary">停止计时</button>
+      </view>
+    </view>
+  </mp-half-screen-dialog>
+  <mp-dialog bindbuttontap="tapSavePlaylistDialogButton" buttons="{{[ {text:'取消'},{text:'保存'} ]}}" data-weui-theme="light" show="{{showSavePlaylistDialog}}" title="保存节拍">
+    <view class="playlist-item weui-cells__group_form">
+      <view class="weui-cell">
+        <input bindblur="changePlaylistNameInput" bindconfirm="changePlaylistNameInput" class="weui-input playlist-name-input" focus="{{playlistNameInputFocus}}" placeholder="请输入节拍名称" type="text" value="{{playlistName}}"></input>
+      </view>
+    </view>
+  </mp-dialog>
+  <mp-dialog bindbuttontap="tapSavePlaylistRenameButton" buttons="{{[ {text:'取消'},{text:'保存'} ]}}" data-index="{{playlistRenameIndex}}" data-playid="{{playlistRenameId}}" data-weui-theme="light" show="{{showRenamePlaylistDialog}}" title="重命名节拍">
+    <view class="playlist-item weui-cells__group_form">
+      <view class="weui-cell">
+        <input bindblur="changePlaylistNameInput" bindconfirm="changePlaylistNameInput" class="weui-input playlist-name-input" focus="{{playlistNameInputFocus}}" placeholder="请输入节拍名称" type="text" value="{{playlistName}}"></input>
+      </view>
+    </view>
+  </mp-dialog>
+  <mp-half-screen-dialog bindclose="hidePlaylist" bindtap="cancelPlayItemMove" catchtouchmove="preventTouchMove" class="playlist-dialog" closabled="{{false}}" data-weui-theme="{{darkTheme}}" show="{{showPlaylistDialog}}">
+    <view class="weui-half-screen-dialog__hd" slot="title">
+      <view bindtap="hidePlaylist" class="weui-half-screen-dialog__hd__side" data-type="close">
+        <view class="weui-icon-btn weui-icon-btn_close" hoverClass="weui-active">关闭</view>
+      </view>
+      <view class="weui-half-screen-dialog__hd__main">
+        <text class="weui-half-screen-dialog__title vip-title">播放列表</text>
+      </view>
+      <view bindtap="tapAddPlaylistButton" class="weui-half-screen-dialog__hd__side save-btn">
+        <view class="">新建</view>
+      </view>
+    </view>
+    <view slot="desc">
+      <scroll-view class="dialog-scroll weui-cells" scrollY="true" wx:if="{{playlist.length}}">
+        <view class="weui-cell weui-cell_swiped" wx:for="{{playlist}}" wx:key="playid">
+          <view bindtap="tapApplyPlayItem" bindtouchmove="bindPlayItemMove" bindtouchstart="bindPlayItemStart" class="weui-cell__bd playlist-name {{item.isTouchMove?' item-delete':''}}" data-index="{{index}}" data-playid="{{item.playid}}">
+            <view class="weui-cell">
+              <view class="weui-cell__bd">{{item.playlistName}}</view>
+              <view class="weui-cell__ft">
+                <text class="tempo">{{item.tempo.length}}/{{item.tempo.duration}}</text>
+                <view class="subdiv">
+                  <image class="note" src="https://lukehui.oss-cn-beijing.aliyuncs.com/cheers/image/notes/note-{{item.tempo.duration}}-{{subNotes[subitem].icon}}" wx:if="{{subidx<6&&subitem&&subNotes[subitem].icon}}" wx:for="{{item.subdivs}}" wx:for-index="subidx" wx:for-item="subitem" wx:key="sub"></image>
+                  <text class="etc" wx:if="{{item.subdivs.length>6}}">...</text>
+                </view>
+                <text class="speed">{{item.bpmSpeed}}<text class="bpm">BPM</text>
+                </text>
+                <text class="tone">{{toneNames[item.tone]}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="weui-cell__ft">
+            <view bindtap="tapShowPlayItemRename" class="weui-swiped-btn rename-btn" data-index="{{index}}" data-name="{{item.playlistName}}" data-playid="{{item.playid}}">重命名</view>
+            <view bindtap="tapDeletePlayItem" class="weui-swiped-btn weui-swiped-btn_warn" data-index="{{index}}" data-name="{{item.playlistName}}" data-playid="{{item.playid}}">删除</view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="empty" wx:else>
+        <image class="empty-img" src="../../assets/images/empty-icon.png"></image>
+      </view>
+    </view>
+  </mp-half-screen-dialog>
+  <speed-input bind:hide="hideSpeedNum" bind:saveSpeedNum="saveSpeedNum" darkTheme="{{darkTheme}}" num="{{bpmSpeed}}" show="{{showBpmSpeedDialog}}"></speed-input>
+  <clock-dialog bind:hide="closeClockDialog" clockDays="{{clockDays}}" show="{{showClockDialog}}"></clock-dialog>
+  <train-dialog beatCount="{{beatCount}}" bind:hide="hideTrain" curBar="{{trainCurBar}}" curIndex="{{trainCurIndex}}" curSpeed="{{bpmSpeed}}" darkTheme="{{darkTheme}}" show="{{showTrainDialog}}" theme="{{theme}}" trainIng="{{trainIng}}"></train-dialog>
+</view>

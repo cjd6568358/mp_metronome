@@ -1,0 +1,62 @@
+<view class="container theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme=='dark'?'dark':'light'}}">
+    <view class="top-navbar" style="padding-top:{{statusBar-6}}px;height: {{customBar}}px;">
+        <view bindtap="tapBack" class="backnav" style="height: {{customBar-12}}px;width: {{customBar-12}}px;">
+            <image class="back-icon" src="{{darkTheme=='dark'?'../../assets/images/back-icon-dark.png':'../../assets/images/back-icon.png'}}" style="height: {{customBar-12}}px;width: {{customBar-12}}px;"></image>
+        </view>
+    </view>
+    <view class="hero">
+        <view class="today" wx:if="{{summary.totalMinutes>0&&summary.todayMinutes>0}}">今日尚未打卡！</view>
+        <view class="welcome" wx:elif="{{summary.totalMinutes==0&&summary.continuousDays==0}}"> 朋友，很高兴与你相识。一起来打卡练习吧！ </view>
+        <view class="cdays" wx:else>
+            <view class="title">连续练习</view>
+            <text class="num">{{summary.continuousDays}}</text>
+            <text class="unit">天</text>
+        </view>
+        <view class="total">
+            <view class="tdays">
+                <view class="title">累计天数</view>
+                <text class="num">{{summary.totalDays}}</text>
+                <text class="unit">天</text>
+            </view>
+            <view class="tminutes">
+                <view class="title">累计时长</view>
+                <text class="num" wx:if="{{summary.totalHours}}">{{summary.totalHours}}</text>
+                <text class="unit" wx:if="{{summary.totalHours}}">小时</text>
+                <text class="num">{{summary.totalMinutes%60}}</text>
+                <text class="unit">分钟</text>
+            </view>
+        </view>
+    </view>
+    <view bindtap="handleShowVip" class="banner">
+        <image class="pic" src="../../assets/images/calendar30.png"></image>
+        <view class="r">
+            <text class="title">21天挑战赛</text>
+            <view class="sub-title">连续打卡练习21天，赠送3天<text class="vip">PRO会员</text>
+            </view>
+        </view>
+    </view>
+    <view class="calendar-card">
+        <view class="title-group">
+            <view class="title">练习日历</view>
+            <view bindtap="tapSubscribe" class="subscribe">订阅提醒</view>
+        </view>
+        <calendar bind:afterCalendarRender="afterCalendarRender" bind:afterTapDate="afterTapDate" bind:onSwipe="onSwipe" bind:takeoverTap="takeoverTap" class="calendar" config="{{calendarConfig}}" id="calendar"></calendar>
+    </view>
+    <view class="banner-ad">
+        <ad bindclose="adClose" binderror="adError" bindload="adLoad" unitId="adunit-8d297adec16a8cef"></ad>
+    </view>
+    <view class="tips">
+        <view>1、每次练习时间超过1分钟，才计入记录；不足1分钟的，不计入练习记录；</view>
+        <view>2、练习提醒订阅后，每天18:00推送打卡提醒；</view>
+        <view>3、因微信限制，练习提醒订阅后仅能推送1次，如需每天推送，请多次订阅。</view>
+    </view>
+    <mp-half-screen-dialog bindclose="closeDateDialog" class="date-dialog" closabled="{{false}}" show="{{showDateDialog}}">
+        <view class="detail" slot="desc">
+            <view class="line"></view>
+            <view class="r">
+                <view class="title">练习<text class="num">{{currentMinute}}</text>分钟</view>
+                <view class="date">{{currentMonth}}月{{currentDate}}日</view>
+            </view>
+        </view>
+    </mp-half-screen-dialog>
+</view>

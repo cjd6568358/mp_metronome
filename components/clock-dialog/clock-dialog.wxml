@@ -1,0 +1,17 @@
+<mp-dialog bindclose="hide" class="{{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme}}" show="{{show}}">
+    <view bindtap="hide" class="clock-dialog">
+        <view wx:if="{{clockDays==21}}">
+            <view class="title">恭喜你！连续练习</view>
+            <view class="title">
+                <text class="num">{{clockDays}}</text>天</view>
+            <view class="sub-title">你已获得3天 <text class="vip">PRO会员</text>，开始享受你的练习之旅吧！</view>
+        </view>
+        <view wx:else>
+            <view class="title">已完成连续练习</view>
+            <view class="title">
+                <text class="num">{{clockDays}}</text>天</view>
+            <view class="sub-title">连续练习21天，赠3天 <text class="vip">PRO会员</text>
+            </view>
+        </view>
+    </view>
+</mp-dialog>

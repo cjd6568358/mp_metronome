@@ -1,0 +1,145 @@
+<view class="container theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme=='dark'?'dark':'light'}}">
+    <view class="top-navbar" style="padding-top:{{statusBar-6}}px;height: {{customBar}}px;">
+        <view bindtap="tapBack" class="backnav" style="height: {{customBar-12}}px;width: {{customBar-12}}px;">
+            <image class="back-icon" src="{{darkTheme=='dark'?'../../assets/images/back-icon-dark.png':'../../assets/images/back-icon.png'}}" style="height: {{customBar-12}}px;width: {{customBar-12}}px;"></image>
+        </view>
+    </view>
+    <view class="user">
+        <view class="avatar">
+            <image class="avatar-img" src="{{userInfo.avatarUrl}}"></image>
+        </view>
+        <button bind:chooseavatar="bindChooseAvatar" class="avatar-edit" openType="chooseAvatar"></button>
+        <view class="name">
+            <text bindtap="tapNicknameEdit" class="nickname" id="nickname-text" wx:if="{{nickNameInputDisabled}}">{{userInfo.nickName}}</text>
+            <input bindblur="blurNicknameInput" class="nickname" disabled="{{nickNameInputDisabled}}" focus="{{!nickNameInputDisabled}}" id="nickname-input" placeholder="请输入昵称" type="nickname" value="{{userInfo.nickName}}" wx:if="{{!nickNameInputDisabled}}"></input>
+            <view bindtap="tapNicknameEdit" class="nickname-edit" wx:if="{{nickNameInputDisabled}}"></view>
+            <text class="vip-title" wx:if="{{userInfo.isVip&&nickNameInputDisabled}}"></text>
+        </view>
+    </view>
+    <view bindtap="tapVipCenter" class="vip-ad">
+        <view class="title">
+            <text class="vip-name vip-title" wx:if="{{!userInfo.isVip&&platform=='ios'}}">特惠活动</text>
+            <text class="vip-name" wx:else>PRO会员</text>
+            <view class="sub-title" wx:if="{{userInfo.isVip&&userInfo.vipLeftDays>30000}}">您是终身会员，已解锁全部高级功能</view>
+            <view class="sub-title" wx:elif="{{userInfo.isVip}}">会员到期时间：{{userInfo.vipExpireTime}}</view>
+            <view class="sub-title" wx:elif="{{platform=='ios'}}">购买乐谱本解锁全部高级功能</view>
+            <view class="sub-title" wx:else>加入会员，解锁全部高级功能</view>
+        </view>
+        <view class="vip-btn" wx:if="{{userInfo.isVip&&userInfo.vipLeftDays>30000}}">查看权益</view>
+        <view class="vip-btn" wx:elif="{{userInfo.isVip}}">续费会员</view>
+        <view class="vip-btn" wx:elif="{{platform=='ios'}}">查看详情</view>
+        <view class="vip-btn" wx:else>开通会员</view>
+    </view>
+    <view bindtap="tapData" class="data">
+        <view class="card">
+            <view class="title weui-cell weui-cell_access">
+                <view class="weui-cell__bd">练习天数</view>
+                <view class="weui-cell__ft"></view>
+            </view>
+            <view class="total">
+                <text class="num">{{summary.totalDays}}</text>天 </view>
+            <view class="week"> 本周练习 {{summary.weekDays}} 天<text class="today" wx:if="{{todayMinutes==0}}">今日尚未练习</text>
+            </view>
+        </view>
+        <view class="card weui-cell_access">
+            <view class="title weui-cell weui-cell_access">
+                <view class="weui-cell__bd">累计时长</view>
+                <view class="weui-cell__ft"></view>
+            </view>
+            <view class="total">
+                <text class="hour" wx:if="{{summary.totalHours}}">
+                    <text class="num">{{summary.totalHours}}</text>小时</text>
+                <text class="num">{{summary.totalMinutes%60}}</text>分钟 </view>
+            <view class="week"> 本周练习 <text wx:if="{{summary.weekHours}}">{{summary.weekHours}} 小时</text> {{summary.weekMinutes%60}} 分钟 </view>
+        </view>
+    </view>
+    <view class="setting-list">
+        <view class="setting-items weui-cells" data-weui-theme="{{darkTheme}}">
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd bg-mode">
+                    <text class="vip-title">节拍计数</text>
+                    <text class="small-tip">显示小节和拍子计数</text>
+                </view>
+                <view catch:tap="checkVip" class="weui-cell__ft">
+                    <switch bindchange="switchShowTempoCount" checked="{{userInfo.isVip&&showTempoCount}}" disabled="{{!userInfo.isVip}}"></switch>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd vip-title bg-mode">弱起小节</view>
+                <view catch:tap="checkVip" class="weui-cell__ft">
+                    <switch bindchange="switchUpbeatOn" checked="{{userInfo.isVip&&upbeatOn}}" disabled="{{!userInfo.isVip}}"></switch>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd">重音震动<text class="small-tip">重音拍子时手机震动提示</text>
+                </view>
+                <view class="weui-cell__ft">
+                    <switch bindchange="switchVibrateAccent" checked="{{vibrateAccent}}"></switch>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd">屏幕常亮<text class="small-tip">建议开启，避免长时间使用时熄屏</text>
+                </view>
+                <view class="weui-cell__ft">
+                    <switch bindchange="switchKeepScreenOn" checked="{{keepScreenOn}}"></switch>
+                </view>
+            </view>
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd bg-mode">
+                    <text class="vip-title">熄屏播放</text>
+                    <text class="small-tip">手机锁屏播放，建议慢跑使用</text>
+                </view>
+                <view catch:tap="checkVip" class="weui-cell__ft">
+                    <switch bindchange="switchBackgroundModeOn" checked="{{userInfo.isVip&&backgroundModeOn}}" disabled="{{!userInfo.isVip}}"></switch>
+                </view>
+            </view>
+            <view bindtap="tapTheme" class="weui-cell weui-cell_access">
+                <view class="weui-cell__bd">主题外观<text class="small-tip">切换深色模式、主题皮肤</text>
+                </view>
+                <view class="weui-cell__ft">
+                    <text class="weui-badge weui-badge_dot" wx:if="{{showThemeDot}}"></text>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="recommend">
+        <view class="title">我们开发的其他工具</view>
+        <view bindtap="jumpTune" class="item">
+            <image class="icon" src="../../assets/images/tune-icon.png"></image>
+            <view class="desc">
+                <text class="sub-title">专业调音器</text>
+                <text class="summary">精准、免费、简单、好用的专业调音器</text>
+            </view>
+        </view>
+    </view>
+    <view class="setting-list">
+        <view class="setting-items weui-cells" data-weui-theme="{{darkTheme}}">
+            <view class="weui-cell weui-cell_access">
+                <button class="weui-cell__bd feedback" openType="feedback">使用反馈</button>
+                <view class="weui-cell__ft"></view>
+            </view>
+            <view bindtap="tapReset" class="weui-cell weui-cell_access">
+                <view class="weui-cell__bd">清理缓存</view>
+            </view>
+            <view class="weui-cell weui-cell_switch">
+                <view class="weui-cell__bd bg-mode">兼容模式<text class="small-tip">如无法正常播放，请尝试开启</text>
+                </view>
+                <view class="weui-cell__ft">
+                    <switch bindchange="switchInnerMode" checked="{{innerMode}}"></switch>
+                </view>
+            </view>
+            <view bindtap="tapAbout" class="weui-cell weui-cell_access">
+                <view class="weui-cell__bd">关于小万</view>
+                <view class="weui-cell__ft"></view>
+            </view>
+            <view bindtap="tapComment" class="weui-cell weui-cell_access">
+                <view class="weui-cell__bd">求夸夸👏👏</view>
+                <view class="weui-cell__ft"></view>
+            </view>
+        </view>
+    </view>
+    <view class="footer">
+        <view bindtap="tapRedeem" class="redeem">使用兑换码</view>
+        <view>这是小万陪你的第 {{userInfo.bornDays}} 天</view>
+    </view>
+</view>

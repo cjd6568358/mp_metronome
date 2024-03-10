@@ -1,0 +1,46 @@
+{
+  "entryPagePath": "pages/index/index",
+  "pages": [
+    "pages/index/index",
+    "pages/index/webview",
+    "pages/setting/index",
+    "pages/setting/about",
+    "pages/setting/theme",
+    "pages/setting/redeem",
+    "pages/vip/index",
+    "pages/data/index"
+  ],
+  "requiredBackgroundModes": [
+    "audio"
+  ],
+  "style": "v2",
+  "darkmode": true,
+  "tabBar": {
+    "custom": true,
+    "color": "#A8ACBC",
+    "selectedColor": "#EEF0F1",
+    "borderStyle": "black",
+    "backgroundColor": "#2C2C2E",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "节拍器"
+      },
+      {
+        "pagePath": "pages/setting/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "workers": "worker",
+  "useExtendedLib": {
+    "weui": true
+  },
+  "renderer": "webview",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "defaultContentBox": true
+    }
+  }
+}

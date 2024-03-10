@@ -1,0 +1,1 @@
+Page({data:{weburl:"https://api.geyantech.com"},onLoad:function(e){e.page&&"license"==e.page?this.setData({weburl:"https://geyantech.com/page/license.html"}):"speeds"==e.page&&this.setData({weburl:"https://geyantech.com/page/speeds.html"})},onShow:function(){},onShareAppMessage:function(){return app.onShareAppMessage()},onShareTimeline:function(){return app.onShareTimeline()}});
