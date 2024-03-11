@@ -1,0 +1,1 @@
+var e=require("@babel/runtime/helpers/interopRequireDefault.js").default;Object.defineProperty(exports,"__esModule",{value:!0}),exports.default=void 0;var a=e(require("E9B2CFD01874D7CF8FD4A7D7DD08C176.js")),r=e(require("D2A7EC571874D7CFB4C18450F718C176.js")),t=[["base",(0,a.default)()],["get-calendar-data",(0,r.default)()]];exports.default=t;

@@ -1,0 +1,19 @@
+<mp-half-screen-dialog bindclose="hide" class="speed-dialog {{darkTheme=='dark'?'container-dark':'container-light'}}" closabled="{{false}}" data-weui-theme="{{darkTheme}}" show="{{show}}" title="">
+    <view class="keyboard" slot="desc">
+        <view class="screen">
+            <text class="num"> {{num}}</text>
+            <text class="cursor">|</text>
+        </view>
+        <view class="set-button">
+            <view class="number-zone">
+                <view bindtap="tapKeyboardNumberBtn" class="num-btn {{index+1==10?'merge':''}}" data-index="{{index}}" wx:for="{{10}}" wx:key="item">{{index+1!=11&&index+1!=10?index+1:''}}{{index+1==10?0:''}}</view>
+            </view>
+            <view class="func-zone">
+                <view bindtap="tapKeyboardDeleteBtn" class="delete-btn" hoverClass="btn-hover">
+                    <image class="delete-icon" src="{{darkTheme=='dark'?'../../assets/images/delete-icon-dark.png':'../../assets/images/delete-icon.png'}}"></image>
+                </view>
+                <view bindtap="saveSpeedNum" class="save-btn" data-num="{{num}}" data-target-id="{{targetId}}">确定</view>
+            </view>
+        </view>
+    </view>
+</mp-half-screen-dialog>

@@ -1,0 +1,1 @@
+Component({properties:{show:{type:Boolean,value:!1},clockDays:{type:Number,value:1}},data:{},methods:{hide:function(){this.triggerEvent("hide"),console.log("====hide=====")}}});

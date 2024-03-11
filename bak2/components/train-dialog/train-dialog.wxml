@@ -1,0 +1,266 @@
+<mp-half-screen-dialog bindclose="hide" class="train-dialog theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" closabled="{{false}}" data-weui-theme="{{darkTheme}}" show="{{show}}">
+    <view class="train-tabs" slot="title">
+        <view bindtap="swithTab" class="item {{tabId==0?'active':''}}" data-tabid="0">
+            <view class="title">比例变速</view>
+            <view class="border"></view>
+        </view>
+        <view bindtap="swithTab" class="item {{tabId==1?'active':''}}" data-tabid="1">
+            <view class="title">自动变速</view>
+            <view class="border"></view>
+        </view>
+        <view bindtap="swithTab" class="item {{tabId==2?'active':''}}" data-tabid="2">
+            <view class="title">间隔训练</view>
+            <view class="border"></view>
+        </view>
+    </view>
+    <view bindtap="hideSpeedNum" slot="desc">
+        <view class="group group-step {{tabId==0?'':'hide'}}">
+            <view class="status" wx:if="{{trainIng}}">
+                <view class="tip" wx:if="{{nextLeftTime}}">{{nextLeftTime}} 后，速度将会达到 {{nextSpeed}} BPM</view>
+                <view class="tip" wx:else>最后一阶段，速度已达到 {{nextSpeed}} BPM</view>
+                <view class="weui-progress">
+                    <view class="weui-progress-bar js_progress" style="width: {{progress+'%'}};"></view>
+                    <view class="dots">
+                        <view class="dot {{curIndex>idx?'played':''}}" style="left:{{item.percent+'%'}};" wx:if="{{idx<plans.length-1}}" wx:for="{{plans}}" wx:for-index="idx" wx:key="key"></view>
+                    </view>
+                </view>
+                <view class="dashboard">
+                    <view class="item">
+                        <view class="title">当前速度</view>
+                        <view class="num">{{curSpeed}}</view>
+                    </view>
+                    <view class="item">
+                        <view class="title">剩余小节</view>
+                        <view class="num">{{leftBar}}</view>
+                    </view>
+                    <view class="item">
+                        <view class="title">剩余时间</view>
+                        <view class="num">{{leftTime}}</view>
+                    </view>
+                </view>
+                <view class="msg">练习需要专注，终止训练后只能重新开始</view>
+                <view class="row target">
+                    <view bindtap="stopTrain" class="timer-button" data-mode="1">终止训练</view>
+                </view>
+            </view>
+            <view wx:else>
+                <view class="row target">
+                    <view class="text label">目标速度</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusBpmBtn" class="minus" data-target="1">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view catchtap="tapSpeedNum" class="number" data-target="1">{{speed.t1}}</view>
+                        <view catchtap="tapIncBpmBtn" class="plus" data-target="1">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                    <view class="text">BPM</view>
+                </view>
+                <view class="card">
+                    <view class="row card-header">
+                        <view class="col text">倍速</view>
+                        <view class="col text">练习时长(分钟)</view>
+                    </view>
+                    <scroll-view class="card-body" scrollTop="{{scrollTop}}" scrollY="true">
+                        <view class="row" wx:for="{{plans}}" wx:for-index="idx" wx:key="key">
+                            <view class="col">
+                                <view class="speed-control small">
+                                    <view catchtap="tapMinusScaleBtn" class="minus" data-target="{{idx}}">
+                                        <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                                    </view>
+                                    <view class="number">{{item.scale}}%</view>
+                                    <view catchtap="tapIncScaleBtn" class="plus" data-target="{{idx}}">
+                                        <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                                    </view>
+                                </view>
+                                <view class="text-small">{{item.speed}} BPM</view>
+                            </view>
+                            <view class="col">
+                                <view class="speed-control small">
+                                    <view catchtap="tapMinusMinuteBtn" class="minus" data-target="{{idx}}">
+                                        <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                                    </view>
+                                    <view class="number">{{item.minute}}</view>
+                                    <view catchtap="tapIncMinuteBtn" class="plus" data-target="{{idx}}">
+                                        <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                                    </view>
+                                </view>
+                                <view class="text-small">{{item.barCount}}小节</view>
+                            </view>
+                        </view>
+                    </scroll-view>
+                    <view class="card-footer">
+                        <view class="tip">{{totalMinute}} 分钟后，速度将会达到 {{speed.t1}} BPM</view>
+                        <view class="row">
+                            <view class="col">
+                                <view bindtap="removeStep" class="btn">删除变速段</view>
+                            </view>
+                            <view class="col">
+                                <view bindtap="addStep" class="btn">增加变速段</view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                <view class="row target">
+                    <view bindtap="startTrain" class="timer-button vip-title" data-mode="1">开始训练</view>
+                </view>
+            </view>
+        </view>
+        <view class="group group-stepless {{tabId==1?'':'hide'}}">
+            <view class="status" wx:if="{{trainIng}}">
+                <view class="dashboard">
+                    <view class="item">
+                        <view class="title">当前速度</view>
+                        <view class="num">{{curSpeed}}</view>
+                    </view>
+                    <view class="item">
+                        <view class="title">剩余小节</view>
+                        <view class="num">{{leftBar}}</view>
+                    </view>
+                    <view class="item">
+                        <view class="title">剩余时间</view>
+                        <view class="num">{{leftTime}}</view>
+                    </view>
+                </view>
+                <view class="msg">练习需要专注，终止训练后只能重新开始</view>
+                <view class="row target">
+                    <view bindtap="stopTrain" class="timer-button" data-mode="1">终止训练</view>
+                </view>
+            </view>
+            <view wx:else>
+                <view class="row target">
+                    <radio-group bindchange="switchStepMode" class="radio-group">
+                        <label>
+                            <radio checked="{{stepMode==0}}" class="input-radio" value="0"></radio>按小节变速</label>
+                        <label>
+                            <radio checked="{{stepMode==1}}" class="input-radio" value="1"></radio>按时间变速</label>
+                    </radio-group>
+                </view>
+                <view class="row target">
+                    <view class="text label">目标速度</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusBpmBtn" class="minus" data-target="2">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view catchtap="tapSpeedNum" class="number" data-target="2">{{speed.t2}}</view>
+                        <view catchtap="tapIncBpmBtn" class="plus" data-target="2">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                    <view class="text">BPM</view>
+                </view>
+                <view class="row target">
+                    <view class="text label">开始速度</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusBpmBtn" class="minus" data-target="3">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view catchtap="tapSpeedNum" class="number" data-target="3">{{speed.t3}}</view>
+                        <view catchtap="tapIncBpmBtn" class="plus" data-target="3">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                    <view class="text">BPM</view>
+                </view>
+                <view class="row target {{stepMode==0?'':'hide'}}">
+                    <view class="text label">每</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusStepBarBtn" class="minus" data-target="{{idx}}">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view class="number">{{stepBar}}</view>
+                        <view catchtap="tapIncStepBarBtn" class="plus" data-target="{{idx}}">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                    <view class="text">小节</view>
+                </view>
+                <view class="row target {{stepMode==1?'':'hide'}}">
+                    <view class="text label">每</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusStepMinuteBtn" class="minus" data-target="{{idx}}">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view class="number">{{stepMinute}}</view>
+                        <view catchtap="tapIncStepMinuteBtn" class="plus" data-target="{{idx}}">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                    <view class="text">分钟</view>
+                </view>
+                <view class="row target">
+                    <view class="text label">增加</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusStepBpmBtn" class="minus">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view class="number" data-target="3">{{stepSpeed}}</view>
+                        <view catchtap="tapIncStepBpmBtn" class="plus">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                    <view class="text">BPM</view>
+                </view>
+                <view class="tip">{{totalStepMinute}} 分钟后，速度将会达到 {{speed.t2}} BPM</view>
+                <view class="row target">
+                    <view bindtap="startTrain" class="timer-button vip-title" data-mode="2">开始训练</view>
+                </view>
+            </view>
+        </view>
+        <view class="group group-gap {{tabId==2?'':'hide'}}">
+            <view class="status" wx:if="{{trainIng}}">
+                <view class="dashboard">
+                    <view class="item">
+                        <view class="title">当前速度</view>
+                        <view class="num">{{curSpeed}}</view>
+                    </view>
+                    <view class="item">
+                        <view class="title">剩余小节</view>
+                        <view class="num">{{leftBar}}</view>
+                    </view>
+                    <view class="item">
+                        <view class="title">剩余时间</view>
+                        <view class="num">{{leftTime}}</view>
+                    </view>
+                </view>
+                <view class="msg">练习需要专注，终止训练后只能重新开始</view>
+                <view class="row target">
+                    <view bindtap="stopTrain" class="timer-button" data-mode="3">终止训练</view>
+                </view>
+            </view>
+            <view style="margin-top: 40rpx;" wx:else>
+                <view class="row between">
+                    <view class="text">静音间隔小节</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusGapBarBtn" class="minus" data-target="{{idx}}">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view class="number">{{gapBar}}</view>
+                        <view catchtap="tapIncGapBarBtn" class="plus" data-target="{{idx}}">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                </view>
+                <view class="row between">
+                    <view class="text">训练时长(分钟)</view>
+                    <view class="speed-control">
+                        <view catchtap="tapMinusGapMinuteBtn" class="minus" data-target="{{idx}}">
+                            <image class="minus-icon" src="../../assets/images/minus-icon.png"></image>
+                        </view>
+                        <view class="number">{{gapMinute}}</view>
+                        <view catchtap="tapIncGapMinuteBtn" class="plus" data-target="{{idx}}">
+                            <image class="plus-icon" src="../../assets/images/plus-icon.png"></image>
+                        </view>
+                    </view>
+                </view>
+                <view class="msg" style="margin-top: 80rpx;">交替播放和静音小节</view>
+                <view class="msg" style="margin-top: -20rpx;margin-bottom: 80rpx;">强化训练您的节奏感</view>
+                <view class="row target">
+                    <view bindtap="startTrain" class="timer-button vip-title" data-mode="3">开始训练</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</mp-half-screen-dialog>
+<speed-input bind:hide="hide" bind:saveSpeedNum="saveSpeedNum" darkTheme="{{darkTheme}}" num="{{speedInputNum}}" show="{{showSpeedInput}}" targetId="{{speedInputId}}"></speed-input>

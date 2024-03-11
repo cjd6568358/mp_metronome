@@ -1,0 +1,126 @@
+<view class="container theme-{{theme}} container-dark" data-weui-theme="dark">
+    <view class="top-navbar" style="padding-top:{{statusBar-6}}px;height: {{customBar+6}}px;">
+        <view bindtap="tapBack" class="backnav" style="height: {{customBar-12}}px;width: {{customBar-12}}px;">
+            <image class="back-icon" src="../../assets/images/back-icon-dark.png" style="height: {{customBar-12}}px;width: {{customBar-12}}px;"></image>
+        </view>
+    </view>
+    <view class="goods" wx:if="{{platform=='ios'}}">
+        <view class="title">买乐谱本送会员权益</view>
+        <view class="goods-list">
+            <view bindtap="tapGoodsItem" class="item {{activeGoodsId==item.id?'active':''}}" data-id="{{item.id}}" data-price="{{item.priceInt}}" data-type="{{item.type}}" wx:for="{{goodsList}}" wx:for-index="idx" wx:key="k">
+                <view class="promo">{{item.desc}}</view>
+                <view class="desc">买{{2*idx+1}}本 <text class="gift">赠送会员</text>
+                </view>
+                <view class="title title-{{idx}}">{{item.short_name}}</view>
+                <view class="price">¥<text class="num">{{item.priceInt}}</text>
+                </view>
+                <view class="orig-price">¥<text class="num">{{item.origPriceInt}}</text>
+                </view>
+            </view>
+        </view>
+        <view class="shipping-form">
+            <radio-group bindchange="onShippingRadioChange" class="radio-group">
+                <label>
+                    <radio checked="{{shippingType==0}}" class="input-radio" value="0"></radio> 无需发货 </label>
+                <label>
+                    <radio checked="{{shippingType==1}}" class="input-radio" value="1"></radio> 我要发货（需另付10元运费） </label>
+            </radio-group>
+            <view class="address-group" wx:if="{{shippingType==1}}">
+                <view class="item">
+                    <text class="weui-label">收件人</text>
+                    <input bindblur="changeDeliveryNameInput" bindchange="changeDeliveryNameInput" bindconfirm="changeDeliveryNameInput" class="weui-input" focus="{{deliveryNameInputFocus}}" placeholder="请输入收件人姓名" value="{{deliveryName}}"></input>
+                </view>
+                <view class="item">
+                    <text class="weui-label">手机号</text>
+                    <input bindblur="changeMobileInput" bindchange="changeMobileInput" bindconfirm="changeMobileInput" class="weui-input" focus="{{mobileInputFocus}}" placeholder="请输入收件手机号" type="number" value="{{mobile}}"></input>
+                </view>
+                <view class="item">
+                    <text class="weui-label">收货地址</text>
+                    <input bindblur="changeAddressInput" bindchange="changeAddressInput" bindconfirm="changeAddressInput" class="weui-input" focus="{{addressInputFocus}}" placeholder="请输入收货地址" value="{{address}}"></input>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="benefits">
+        <text class="vip-title">会员权益</text>
+        <view class="item">
+            <image class="icon" src="../../assets/images/vip-subdiv.png"></image>
+            <text class="title">切分节拍</text>
+            <text class="sub-title">通过切分节拍，练习更多节奏型</text>
+        </view>
+        <view class="item">
+            <image class="icon" src="../../assets/images/vip-train.png"></image>
+            <text class="title">专业训练</text>
+            <text class="sub-title">多种加强节奏训练模式，助你高效练习</text>
+        </view>
+        <view class="item">
+            <image class="icon" src="../../assets/images/vip-playlist.png"></image>
+            <text class="title">播放列表</text>
+            <text class="sub-title">不限次数保存、切换和管理多种节拍</text>
+        </view>
+        <view class="item">
+            <image class="icon" src="../../assets/images/vip-bgmode.png"></image>
+            <text class="title">熄屏播放</text>
+            <text class="sub-title">退出小程序、切换应用、手机熄屏照常使用</text>
+        </view>
+        <view class="item">
+            <image class="icon" src="../../assets/images/vip-tone.png"></image>
+            <text class="title">专属音色</text>
+            <text class="sub-title">畅享全部会员专属节拍音色，新增英语人声</text>
+        </view>
+        <view class="item">
+            <image class="icon" src="../../assets/images/vip-theme.png"></image>
+            <text class="title">主题皮肤</text>
+            <text class="sub-title">自由定制主题皮肤，打造自己的个性节拍器</text>
+        </view>
+        <view class="more">未来功能更新：享受即将推出的所有新功能</view>
+    </view>
+    <view class="goods" style="margin-top: 60rpx;">
+        <view class="title">对比传统节拍器</view>
+        <image class="diff-img" src="https://lukehui.oss-cn-beijing.aliyuncs.com/cheers/image/vip-diff.png"></image>
+    </view>
+    <view class="pay-tips" wx:if="{{platform=='ios'}}">
+        <view class="pics">
+            <image mode="widthFix" src="{{item}}" wx:for="{{pics}}" wx:key="k"></image>
+        </view>
+        <view>购买须知</view>
+        <view>1、支付购买表示您同意<text bindtap="handleLicense" class="link">《会员服务协议》</text>； </view>
+        <view>2、购买乐谱本，即可赠送不同会员时长；默认选择不发货，如需发货，需支付10元运费； </view>
+        <view>3、如选择发货，赠送会员时长实时到帐，每月1日、15日统一邮寄乐谱本；</view>
+        <view>4、如有问题，请 <button bindcontact="handleContact" class="link" openType="contact" sessionFrom="sessionFrom">联系客服</button>。</view>
+    </view>
+    <view class="pay-tips" style="margin-bottom: 400rpx;" wx:else>
+        <view>购买须知</view>
+        <view>1、支付购买表示您同意<text bindtap="handleLicense" class="link">《会员服务协议》</text>； </view>
+        <view>2、因包括虚拟会员权益，支付后不支持退换货； </view>
+        <view style="margin-bottom:160rpx;">3、如有问题，请 <button bindcontact="handleContact" class="link" openType="contact" sessionFrom="sessionFrom">联系客服</button>。</view>
+    </view>
+    <view class="pay-dialog" data-weui-theme="light">
+        <view class="goods-list" wx:if="{{platform!='ios'}}">
+            <view bindtap="tapGoodsItem" class="item {{activeGoodsId==item.id?'active':''}}" data-id="{{item.id}}" data-price="{{item.priceInt}}" data-type="{{item.type}}" wx:for="{{goodsList}}" wx:for-index="idx" wx:key="k">
+                <view class="promo">{{item.desc}}</view>
+                <view class="price">¥<text class="num">{{item.priceInt}}</text>
+                </view>
+                <view class="orig-price">¥<text class="num">{{item.origPriceInt}}</text>
+                </view>
+                <view class="title title-{{idx}}">{{item.short_name}}</view>
+            </view>
+        </view>
+        <view class="promo-tip" wx:if="{{promoDiscount&&promoDiscountCountDown&&userInfo.vipExpireTime!='2199-12-31'}}"> 已优惠 ¥{{activeGoodsId==1?promoDiscount/2:promoDiscount}}，{{promoDiscountCountDown}} 后恢复原价 </view>
+        <button class="pay-btn" disabled="true" style="margin-top: 10rpx;" type="primary" wx:if="{{userInfo.isVip&&userInfo.vipExpireTime=='2199-12-31'}}">您已开通终身会员</button>
+        <button bindtap="tapPay" class="pay-btn" type="primary" wx:elif="{{platform=='ios'}}">去支付 <text wx:if="{{totalPrice}}">¥{{totalPrice}}</text>
+        </button>
+        <button bindtap="tapPay" class="pay-btn" type="primary" wx:elif="{{userInfo.isVip}}">续费支付 <text wx:if="{{totalPrice}}">¥{{totalPrice}}</text>
+        </button>
+        <button bindtap="tapPay" class="pay-btn" type="primary" wx:else>支付 <text wx:if="{{totalPrice}}">¥{{totalPrice}}</text> 开通</button>
+    </view>
+    <mp-dialog bindclose="tapBack" data-weui-theme="light" show="{{showPaySuccDialog}}">
+        <view class="pay-succ-dialog">
+            <image class="success-icon" src="../../assets/images/success-icon.png"></image>
+            <view class="title">您已成功开通<text class="vip-name">PRO会员</text>
+            </view>
+            <view class="sub-title">请尽情享受您的练习之旅吧</view>
+            <button bindtap="tapCloseSuccBtn" class="success-btn" type="primary">立即体验</button>
+        </view>
+    </mp-dialog>
+</view>

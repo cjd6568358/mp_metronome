@@ -1,0 +1,17 @@
+<view class="container theme-{{theme}} {{darkTheme=='dark'?'container-dark':'container-light'}}" data-weui-theme="{{darkTheme=='dark'?'dark':'light'}}">
+    <view class="top-navbar" style="padding-top:{{statusBar-6}}px;height: {{customBar}}px;">
+        <view bindtap="tapBack" class="backnav" style="height: {{customBar-12}}px;width: {{customBar-12}}px;">
+            <image class="back-icon" src="{{darkTheme=='dark'?'../../assets/images/back-icon-dark.png':'../../assets/images/back-icon.png'}}" style="height: {{customBar-12}}px;width: {{customBar-12}}px;"></image>
+        </view>
+    </view>
+    <view class="redeem">
+        <input bindblur="changeRedeemInput" bindconfirm="changeRedeemInput" class="weui-input redeem-input" placeholder="请输入兑换码" placeholderStyle="color:{{darkTheme=='dark'?'#A8ACBC':'#A8ACBC'}};" type="text" value=""></input>
+        <button bindtap="tapRedeemButton" class="redeem-button" type="primary">确认兑换</button>
+        <view class="notes">
+            <view>兑换须知</view>
+            <view>1、兑换码有时效性，请在有效期内使用； </view>
+            <view>2、一个兑换码仅限一个账户使用一次； </view>
+            <view style="margin-bottom:160rpx;">3、如有问题，请 <button bindcontact="handleContact" class="link" openType="contact" sessionFrom="sessionFrom">联系客服</button>。</view>
+        </view>
+    </view>
+</view>
